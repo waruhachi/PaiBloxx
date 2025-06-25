@@ -7,11 +7,11 @@ extern char **environ;
 - (instancetype)init {
 	self = [super init];
 	if (self) {
-		AppearanceSettings *appearanceSettings = [[AppearanceSettings alloc] init];
+		HBAppearanceSettings *appearanceSettings = [[HBAppearanceSettings alloc] init];
 
 		self.hb_appearanceSettings = appearanceSettings;
 		self.navigationItem.titleView = [UIView new];
-		self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,10,10)];
+		self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
 		self.titleLabel.font = [UIFont boldSystemFontOfSize:17];
 		self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
 		self.titleLabel.text = myTitle;
@@ -19,7 +19,7 @@ extern char **environ;
 		self.titleLabel.textAlignment = NSTextAlignmentCenter;
 		[self.navigationItem.titleView addSubview:self.titleLabel];
 
-		self.iconView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,10,10)];
+		self.iconView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
 		self.iconView.contentMode = UIViewContentModeScaleAspectFit;
 		self.iconView.image = [UIImage imageNamed:myIcon inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
 		self.iconView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -44,8 +44,8 @@ extern char **environ;
 	if (!_specifiers) {
 		_specifiers = [self loadSpecifiersFromPlistName:self.plistName target:self];
 		self.savedSpecifiers = [NSMutableDictionary dictionary];
-		for(PSSpecifier *specifier in _specifiers){
-			if([self.chosenIDs containsObject:[specifier propertyForKey:@"id"]]){
+		for (PSSpecifier *specifier in _specifiers) {
+			if ([self.chosenIDs containsObject:[specifier propertyForKey:@"id"]]) {
 				[self.savedSpecifiers setObject:specifier forKey:[specifier propertyForKey:@"id"]];
 			}
 		}
@@ -53,7 +53,7 @@ extern char **environ;
 	return _specifiers;
 }
 
--(UIImage *)imageNamed:(NSString *)name {
+- (UIImage *)imageNamed:(NSString *)name {
 	return [UIImage imageNamed:name inBundle:[NSBundle bundleWithPath:self.BundlePath] compatibleWithTraitCollection:nil];
 }
 
@@ -63,16 +63,16 @@ extern char **environ;
 	}
 }*/
 
-- (void)showMe:(NSString *)showMe after: (NSString*)after animate:(bool)animate {
-	![self containsSpecifier: self.savedSpecifiers[showMe]] ? [self insertContiguousSpecifiers:@[self.savedSpecifiers[showMe]] afterSpecifierID: after animated: animate] : 0;
+- (void)showMe:(NSString *)showMe after:(NSString *)after animate:(bool)animate {
+	![self containsSpecifier:self.savedSpecifiers[showMe]] ? [self insertContiguousSpecifiers:@[self.savedSpecifiers[showMe]] afterSpecifierID:after animated:animate] : 0;
 }
 
 - (void)hideMe:(NSString *)hideMe animate:(bool)animate {
 	[self containsSpecifier:self.savedSpecifiers[hideMe]] ? [self removeContiguousSpecifiers:@[self.savedSpecifiers[hideMe]] animated:animate] : 0;
 }
 
--(id)readPreferenceValue:(PSSpecifier *)specifier{
-	NSString *path = [NSString stringWithFormat:@"/User/Library/Preferences/%@.plist", specifier.properties[@"defaults"]];
+- (id)readPreferenceValue:(PSSpecifier *)specifier {
+	NSString *path = [NSString stringWithFormat:jbroot(@"/User/Library/Preferences/%@.plist"), specifier.properties[@"defaults"]];
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
 	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:path]];
 	return (settings[specifier.properties[@"key"]]) ?: specifier.properties[@"default"];
@@ -81,25 +81,37 @@ extern char **environ;
 - (void)link:(NSString *)link name:(NSString *)name {
 	name = [NSString stringWithFormat:@"Do you want to open %@?", name];
 	UIAlertController *ask = [UIAlertController alertControllerWithTitle:@"420 Tools"
-	message:name preferredStyle:UIAlertControllerStyleAlert];
-	UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+																 message:name
+														  preferredStyle:UIAlertControllerStyleAlert];
+	UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:link] options:@{} completionHandler:nil];
 	}];
 	UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
 
 	[ask addAction:confirmAction];
 	[ask addAction:cancelAction];
-	[[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:ask animated:true completion:nil];
+
+	UIViewController *rootViewController = nil;
+	if (@available(iOS 13.0, *)) {
+		UIWindowScene *windowScene = (UIWindowScene *)[UIApplication sharedApplication].connectedScenes.anyObject;
+		rootViewController = windowScene.windows.firstObject.rootViewController;
+	} else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+		rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+#pragma clang diagnostic pop
+	}
+	[rootViewController presentViewController:ask animated:true completion:nil];
 }
 
 - (NSString *)RunCMD:(NSString *)RunCMD WaitUntilExit:(BOOL)WaitUntilExit {
-	NSString *SSHGetFlex = [NSString stringWithFormat:@"%@",RunCMD];
+	NSString *SSHGetFlex = [NSString stringWithFormat:@"%@", RunCMD];
 
 	NSTask *task = [[NSTask alloc] init];
 	NSMutableArray *args = [NSMutableArray array];
 	[args addObject:@"-c"];
 	[args addObject:SSHGetFlex];
-	[task setLaunchPath:@"/bin/sh"];
+	[task setLaunchPath:jbroot(@"/bin/sh")];
 	[task setArguments:args];
 	if (WaitUntilExit) {
 		NSPipe *outputPipe = [NSPipe pipe];
@@ -116,14 +128,14 @@ extern char **environ;
 	return nil;
 }
 
--(NSString *) RunCMDWithLog:(NSString *)RunCMDWithLog {
-	NSString *RunCC = [NSString stringWithFormat:@"%@",RunCMDWithLog];
+- (NSString *)RunCMDWithLog:(NSString *)RunCMDWithLog {
+	NSString *RunCC = [NSString stringWithFormat:@"%@", RunCMDWithLog];
 
 	NSTask *task = [[NSTask alloc] init];
 	NSMutableArray *args = [NSMutableArray array];
 	[args addObject:@"-c"];
 	[args addObject:RunCC];
-	[task setLaunchPath:@"/bin/sh"];
+	[task setLaunchPath:jbroot(@"/bin/sh")];
 	[task setArguments:args];
 	NSPipe *outputPipe = [NSPipe pipe];
 	[task setStandardInput:[NSPipe pipe]];
@@ -137,28 +149,28 @@ extern char **environ;
 	return outputString;
 }
 
-- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier{
+- (void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
 	[super setPreferenceValue:value specifier:specifier];
-	NSString *path = [NSString stringWithFormat:@"/User/Library/Preferences/%@.plist", specifier.properties[@"defaults"]];
+	NSString *path = [NSString stringWithFormat:jbroot(@"/User/Library/Preferences/%@.plist"), specifier.properties[@"defaults"]];
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
 	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:path]];
 	[settings setObject:value forKey:specifier.properties[@"key"]];
 	[settings writeToFile:path atomically:YES];
 	CFStringRef notificationName = (__bridge CFStringRef)specifier.properties[@"PostNotification"];
-	if (notificationName){
+	if (notificationName) {
 		CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notificationName, NULL, NULL, YES);
 	}
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 	CGFloat offsetY = scrollView.contentOffset.y;
 
-	if (offsetY > 1){
+	if (offsetY > 1) {
 		[UIView animateWithDuration:0.7 animations:^{
 			self.iconView.alpha = 1.0;
 			self.titleLabel.alpha = 0.0;
 		}];
-	} else{
+	} else {
 		[UIView animateWithDuration:0.7 animations:^{
 			self.iconView.alpha = 0.0;
 			self.titleLabel.alpha = 1.0;
@@ -169,19 +181,19 @@ extern char **environ;
 	self.headerImageView.frame = CGRectMake(0, offsetY, self.headerView.frame.size.width, 1 - offsetY);
 }
 
--(void)reloadSpecifiers{
+- (void)reloadSpecifiers {
 	[super reloadSpecifiers];
 }
 
-- (void)viewDidLoad{
+- (void)viewDidLoad {
 	[super viewDidLoad];
 	[self reloadSpecifiers];
 
 	CGFloat height = [UIScreen mainScreen].bounds.size.height;
 	CGFloat width = [UIScreen mainScreen].bounds.size.width;
-	self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0,0,width,0.20 * width)];
-	self.headerImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,width,0.20 * width)];
-	self.credit = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,height)];
+	self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0.20 * width)];
+	self.headerImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, width, 0.20 * width)];
+	self.credit = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, height)];
 	self.credit.text = @"";
 	self.headerImageView.contentMode = UIViewContentModeScaleToFill;
 	self.headerImageView.image = [UIImage imageNamed:myIcon inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
@@ -197,12 +209,12 @@ extern char **environ;
 	_table.tableHeaderView = self.headerView;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	tableView.tableHeaderView = self.headerView;
 	return [super tableView:tableView cellForRowAtIndexPath:indexPath];
 }
 
--(void)Save{
+- (void)Save {
 	[self.view endEditing:YES];
 }
 

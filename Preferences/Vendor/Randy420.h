@@ -1,19 +1,18 @@
 #pragma GCC diagnostic ignored "-Wunused-function"
-#include <Preferences/PSListController.h>
-#include <Preferences/PSSpecifier.h>
-#include <CepheiPrefs/HBRootListController.h>
-#import <CepheiPrefs/HBAppearanceSettings.h>
+
+@import CepheiPrefs;
+
+#import <Preferences/PSListController.h>
+#import <Preferences/PSSpecifier.h>
+#import <roothide.h>
+
 #import "colors.h"
 
 @interface PSListController (iOS12Plus)
--(BOOL)containsSpecifier:(PSSpecifier *)arg1;
+- (BOOL)containsSpecifier:(PSSpecifier *)arg1;
 @end
 
-@interface AppearanceSettings : HBAppearanceSettings
-@end
-
-@interface randy420 : HBListController
-{
+@interface randy420 : HBListController {
 	NSFileManager *fm;
 	NSString *myIcon;
 	NSString *myTitle;
@@ -29,14 +28,14 @@
 @property (nonatomic, retain) UIImageView *iconView;
 @property (nonatomic, retain) NSMutableDictionary *savedSpecifiers;
 
--(void)link:(NSString *)link name:(NSString *)name;
--(void)showMe:(NSString *)showMe after:(NSString*)after animate:(bool)animate;
--(void)hideMe:(NSString *)hideMe animate:(bool)animate;
+- (void)link:(NSString *)link name:(NSString *)name;
+- (void)showMe:(NSString *)showMe after:(NSString *)after animate:(bool)animate;
+- (void)hideMe:(NSString *)hideMe animate:(bool)animate;
 //- (void)shouldEnable:(NSString *)enableMe value:(BOOL)value;
--(NSString *)RunCMD:(NSString *)RunCMD WaitUntilExit:(BOOL)WaitUntilExit;
--(NSString *) RunCMDWithLog:(NSString *)RunCMDWithLog;
--(void)Save;
--(UIImage *)imageNamed:(NSString *)name;
+- (NSString *)RunCMD:(NSString *)RunCMD WaitUntilExit:(BOOL)WaitUntilExit;
+- (NSString *)RunCMDWithLog:(NSString *)RunCMDWithLog;
+- (void)Save;
+- (UIImage *)imageNamed:(NSString *)name;
 @end
 
 // NSTask.h
@@ -51,67 +50,67 @@
 // Upon task death a notification will be sent
 //   { Name = NSTaskDidTerminateNotification; object = task; }
 //
--(instancetype)init;
+- (instancetype)init;
 // set parameters
 // these methods can only be done before a launch
--(void)setLaunchPath:(NSString *)path;
--(void)setArguments:(NSArray *)arguments;
--(void)setEnvironment:(NSDictionary *)dict;
+- (void)setLaunchPath:(NSString *)path;
+- (void)setArguments:(NSArray *)arguments;
+- (void)setEnvironment:(NSDictionary *)dict;
 
 // if not set, use current
--(void)setCurrentDirectoryPath:(NSString *)path;
+- (void)setCurrentDirectoryPath:(NSString *)path;
 // if not set, use current
 
 // set standard I/O channels; may be either an NSFileHandle or an NSPipe
--(void)setStandardInput:(id)input;
--(void)setStandardOutput:(id)output;
--(void)setStandardError:(id)error;
+- (void)setStandardInput:(id)input;
+- (void)setStandardOutput:(id)output;
+- (void)setStandardError:(id)error;
 
 // get parameters
--(NSString *)launchPath;
--(NSArray *)arguments;
--(NSDictionary *)environment;
--(NSString *)currentDirectoryPath;
+- (NSString *)launchPath;
+- (NSArray *)arguments;
+- (NSDictionary *)environment;
+- (NSString *)currentDirectoryPath;
 
 // get standard I/O channels; could be either an NSFileHandle or an NSPipe
--(id)standardInput;
--(id)standardOutput;
--(id)standardError;
+- (id)standardInput;
+- (id)standardOutput;
+- (id)standardError;
 
 // actions
--(void)launch;
--(void)interrupt; // Not always possible. Sends SIGINT.
--(void)terminate; // Not always possible. Sends SIGTERM.
--(BOOL)suspend;
--(BOOL)resume;
+- (void)launch;
+- (void)interrupt;	// Not always possible. Sends SIGINT.
+- (void)terminate;	// Not always possible. Sends SIGTERM.
+- (BOOL)suspend;
+- (BOOL)resume;
 
 // status
--(int)processIdentifier;
--(BOOL)isRunning;
--(int)terminationStatus;
+- (int)processIdentifier;
+- (BOOL)isRunning;
+- (int)terminationStatus;
 @end
 
 static id CC(NSString *CMD) {
-	return [NSString stringWithFormat:@"echo \"%@\" | gap",CMD];
+	return [NSString stringWithFormat:@"echo \"%@\" | gap", CMD];
 }
 
 @interface NSTask (NSTaskConveniences)
-+(NSTask *)launchedTaskWithLaunchPath:(NSString *)path arguments:(NSArray *)arguments;
++ (NSTask *)launchedTaskWithLaunchPath:(NSString *)path arguments:(NSArray *)arguments;
 // convenience; create and launch
--(void)waitUntilExit;
+- (void)waitUntilExit;
 // poll the runLoop in defaultMode until task completes
 @end
 
-FOUNDATION_EXPORT NSString * const NSTaskDidTerminateNotification;
+FOUNDATION_EXPORT NSString *const NSTaskDidTerminateNotification;
 
-static NSString *GetNSString(NSString *pkey, NSString *defaultValue, NSString *plst){
-	NSDictionary *Dict = [NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"/var/mobile/Library/Preferences/%@.plist",plst]];
+static NSString *GetNSString(NSString *pkey, NSString *defaultValue, NSString *plst) {
+	NSDictionary *Dict = [NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"/var/mobile/Library/Preferences/%@.plist", plst]];
 
 	return [Dict objectForKey:pkey] ? [Dict objectForKey:pkey] : defaultValue;
 }
 
 static BOOL GetBool(NSString *pkey, BOOL defaultValue, NSString *plst) {
-	NSDictionary *Dict = [NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"/var/mobile/Library/Preferences/%@.plist",plst]];
+	NSDictionary *Dict = [NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"/var/mobile/Library/Preferences/%@.plist", plst]];
 
 	return [Dict objectForKey:pkey] ? [[Dict objectForKey:pkey] boolValue] : defaultValue;
 }
@@ -120,7 +119,7 @@ static BOOL GetBool(NSString *pkey, BOOL defaultValue, NSString *plst) {
 
 #define groupSpec(name) [PSSpecifier groupSpecifierWithName:name]
 
-#define sliderCell(name) [PSSpecifier preferenceSpecifierNamed: name target:self set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:) detail:NULL cell:PSSliderCell edit:Nil]
+#define sliderCell(name) [PSSpecifier preferenceSpecifierNamed:name target:self set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:) detail:NULL cell:PSSliderCell edit:Nil]
 
 #define subtitleSwitchCell(name) [PSSpecifier preferenceSpecifierNamed:name target:self set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:) detail:NULL cell:PSSwitchCell edit:Nil]
 
@@ -129,7 +128,6 @@ static BOOL GetBool(NSString *pkey, BOOL defaultValue, NSString *plst) {
 #define textCell(name) [PSSpecifier preferenceSpecifierNamed:name target:self set:NULL get:NULL detail:NULL cell:PSStaticTextCell edit:Nil]
 
 #define linkCell(name, controller) [PSSpecifier preferenceSpecifierNamed:name target:self set:NULL get:NULL detail:NSClassFromString(controller) cell:PSLinkCell edit:Nil]
-
 
 #define setClass(className) [specifier setProperty:className forKey:@"cellClass"]
 
@@ -155,4 +153,4 @@ static BOOL GetBool(NSString *pkey, BOOL defaultValue, NSString *plst) {
 
 #define addSpec [mutableSpecifiers addObject:specifier]
 
-#define insertSpec [mutableSpecifiers insertObject:specifier atIndex: index]
+#define insertSpec [mutableSpecifiers insertObject:specifier atIndex:index]

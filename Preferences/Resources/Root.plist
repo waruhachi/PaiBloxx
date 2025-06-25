@@ -4,9 +4,9 @@
     <dict>
         <key>items</key>
         <array>
-        
+
             <!-- header -->
-        
+
             <dict>
                 <key>cell</key>
                 <string>PSGroupCell</string>
@@ -21,18 +21,18 @@
                 <key>packageIdentifier</key>
                 <string>emt.paisseon.paibloxx</string>
             </dict>
-            
+
             <!-- basic feature toggles -->
-            
+
             <dict>
                 <key>cell</key>
                 <string>PSGroupCell</string>
                 <key>label</key>
                 <string>General</string>
             </dict>
-            
+
             <!-- custom pac allow/deny lists -->
-            
+
             <dict>
                 <key>cell</key>
                 <string>PSGroupCell</string>
@@ -41,7 +41,7 @@
                 <key>footerText</key>
                 <string>
 Type websites you wish to allow or deny in the fields above.
-                
+
 You can use either the domain (e.g., googleads.com) or an asterick expression (e.g., *ads*).
 For best results, only use the allow section for specific domains which would be blocked by the deny section.
 
@@ -79,9 +79,9 @@ Once you have your PAC file, upload it to GitHub or something and paste the URL 
                 <key>label</key>
                 <string>Deny List</string>
             </dict>
-            
+
             <!-- apply button for pac list -->
-            
+
             <dict>
                 <key>cell</key>
                 <string>PSGroupCell</string>
@@ -100,7 +100,7 @@ Once you have your PAC file, upload it to GitHub or something and paste the URL 
                 <key>cell</key>
                 <string>PSEditTextCell</string>
                 <key>placeholder</key>
-                <string>https://raw.githubusercontent.com/Paisseon/PaiBloxx/emt/PACs/xp.pac</string>
+                <string>https://raw.githubusercontent.com/waruhachi/PaiBloxx/main/PACs/xp.pac</string>
                 <key>noAutoCorrect</key>
                 <true/>
                 <key>defaults</key>
@@ -110,9 +110,9 @@ Once you have your PAC file, upload it to GitHub or something and paste the URL 
                 <key>label</key>
                 <string>Custom PAC URL</string>
             </dict>
-            
+
             <!-- apply button -->
-            
+
             <dict>
                 <key>cell</key>
                 <string>PSGroupCell</string>
@@ -125,9 +125,9 @@ Once you have your PAC file, upload it to GitHub or something and paste the URL 
                 <key>label</key>
                 <string>Respring</string>
             </dict>
-            
+
             <!-- links to my stuff -->
-            
+
             <dict>
                 <key>cell</key>
                 <string>PSGroupCell</string>
@@ -144,7 +144,7 @@ Once you have your PAC file, upload it to GitHub or something and paste the URL 
                 <key>subtitle</key>
                 <string>View on GitHub</string>
                 <key>url</key>
-                <string>https://github.com/paisseon/PaiBloxx</string>
+                <string>https://github.com/waruhachi/PaiBloxx</string>
             </dict>
             <dict>
                 <key>cellClass</key>
@@ -170,9 +170,9 @@ Once you have your PAC file, upload it to GitHub or something and paste the URL 
                 <key>url</key>
                 <string>https://discord.gg/cZ2gBRZvwW</string>
             </dict>
-            
+
             <!-- in my hand is a pen that will write a poem of me and you -->
-            
+
             <dict>
                 <key>cell</key>
                 <string>PSGroupCell</string>
@@ -180,14 +180,14 @@ Once you have your PAC file, upload it to GitHub or something and paste the URL 
                 <string>
     I was the most unfortunate.
     I knew that there was no exit out of this maze.
-    
+
     Then, he was the next unfortunate.
     He did not know that there was no exit out of this maze.
-    
+
     But all the rest weren't so unfortunate.
     They didn't know that they were in the maze in the first place.</string>
             </dict>
-            
+
         </array>
         <key>title</key>
         <string>PaiBloxx</string>

@@ -1,9 +1,9 @@
 Package: emt.paisseon.paibloxx
 Name: PaiBloxx
-Version: 1.1
+Version: 1.2
 Architecture: iphoneos-arm
 Description: A safe ad-blocker for iOS
-Maintainer: Paisseon
+Maintainer: waruhachi
 Author: Paisseon
 Section: Tweaks
 Depends: firmware (>= 12.0), com.bingner.plutil|plutil, com.opa334.ccsupport, ws.hbang.common (>= 1.17), emt.paisseon.pseudo, bash
